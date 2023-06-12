@@ -332,6 +332,8 @@ public class SettingsFragment extends PreferenceFragmentCompat implements
             msp.edit().putBoolean(key, (Boolean) value).apply();
         } else if (value instanceof Long) {
             msp.edit().putLong(key, (Long) value).apply();
+        } else if (value instanceof Integer) {
+            msp.edit().putInt(key, (Integer) value).apply();
         } else {
             msp.edit().putString(key, (String) value).apply();
         }

@@ -16,11 +16,11 @@ def static releaseTime() {
 
 android {
     namespace "com.github.xtjun.xposed.forwardSms"
-    compileSdkVersion 29
+    compileSdk 31
     defaultConfig {
         applicationId "com.github.xtjun.xposed.forwardSms"
         minSdkVersion 23
-        targetSdkVersion 27
+        targetSdkVersion 31
         versionCode 6
         versionName "0.0.6"
 
@@ -111,6 +111,10 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+
+    buildFeatures {
+        buildConfig true
+    }
 }
 
 greendao {
@@ -148,7 +152,7 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'androidx.test.ext:junit:1.1.5'
     testImplementation 'junit:junit:4.13.2'
-    implementation "androidx.appcompat:appcompat:1.0.2"
+    implementation "androidx.appcompat:appcompat:1.4.1"
     implementation "com.google.android.material:material:1.0.0" // material design support
     implementation "androidx.recyclerview:recyclerview:1.0.0" // recycler view
     implementation "androidx.cardview:cardview:1.0.0" // card view
@@ -164,7 +168,7 @@ dependencies {
 
     // Xposed
     compileOnly 'de.robv.android.xposed:api:82'
-    compileOnly 'de.robv.android.xposed:api:82:sources'
+//    compileOnly 'de.robv.android.xposed:api:82:sources'
 
     // Material Dialogs
     implementation "com.afollestad.material-dialogs:core:$materialDialogVersion"

@@ -28,6 +28,9 @@
         <meta-data
             android:name="xposedminversion"
             android:value="30" />
+        <meta-data
+            android:name="xposedscope"
+            android:resource="@array/xposed_scope" />
 
         <activity
             android:name="com.xtjun.xpForwardSms.ui.home.HomeActivity"
@@ -43,7 +46,8 @@
         <activity-alias
             android:name=".HomeActivityAlias"
             android:enabled="true"
-            android:targetActivity="com.xtjun.xpForwardSms.ui.home.HomeActivity">
+            android:targetActivity="com.xtjun.xpForwardSms.ui.home.HomeActivity"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -58,7 +62,8 @@
             android:name="com.jaredrummler.cyanea.prefs.CyaneaThemePickerActivity"
             android:label="@string/label_theme_picker"
             android:theme="@style/AppActionBarTheme"
-            tools:replace="android:theme" />
+            tools:replace="android:theme"
+            android:exported="false"/>
 
         <activity
             android:name="com.jaredrummler.cyanea.prefs.CyaneaSettingsActivity"

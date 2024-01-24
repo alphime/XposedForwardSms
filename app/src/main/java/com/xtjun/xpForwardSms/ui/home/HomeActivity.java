@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
@@ -36,11 +37,8 @@ public class HomeActivity extends BaseActivity {
         handleIntent(getIntent());
 
         // setup toolbar
+        mToolbar = findViewById(R.id.toolbar);
         setupToolbar();
-
-        {
-            mToolbar = findViewById(R.id.toolbar);
-        }
     }
 
     private void setupToolbar() {
@@ -75,11 +73,7 @@ public class HomeActivity extends BaseActivity {
         if (actionBar != null) {
             actionBar.setTitle(title);
             actionBar.setHomeButtonEnabled(true);
-            if (mCurrentFragment instanceof SettingsFragment) {
-                actionBar.setDisplayHomeAsUpEnabled(false);
-            } else {
-                actionBar.setDisplayHomeAsUpEnabled(true);
-            }
+            actionBar.setDisplayHomeAsUpEnabled(!(mCurrentFragment instanceof SettingsFragment));
         }
     }
 
@@ -112,7 +106,7 @@ public class HomeActivity extends BaseActivity {
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+    public boolean onCreateOptionsMenu(@NonNull Menu menu) {
         getMenuInflater().inflate(R.menu.menu_home, menu);
         return true;
     }

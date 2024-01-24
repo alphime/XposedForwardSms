@@ -6,6 +6,7 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 
 import com.github.xtjun.xposed.forwardSms.BuildConfig;
 import com.xtjun.xpForwardSms.common.constant.Const;
@@ -104,20 +105,24 @@ public class SettingsPresenter implements SettingsContract.Presenter {
 
     @Override
     public void checkUpdate() {
-        Disposable disposable = DataRepository.getLatestVersion()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(latestVersion -> {
-                            ApkVersion currentVersion = new ApkVersion(BuildConfig.VERSION_NAME, "");
-                            if (currentVersion.getVersionValue() < latestVersion.getVersionValue()) {
-                                mView.showUpdateDialog(latestVersion);
-                            } else {
-                                mView.showAppAlreadyNewest();
-                            }
-                        },
-                        throwable -> mView.showCheckError(throwable)
-                );
-        mCompositeDisposable.add(disposable);
+        try {
+            Disposable disposable = DataRepository.getLatestVersion()
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(latestVersion -> {
+                                ApkVersion currentVersion = new ApkVersion(BuildConfig.VERSION_NAME, "");
+                                if (currentVersion.getVersionValue() < latestVersion.getVersionValue()) {
+                                    mView.showUpdateDialog(latestVersion);
+                                } else {
+                                    mView.showAppAlreadyNewest();
+                                }
+                            },
+                            throwable -> mView.showCheckError(throwable)
+                    );
+            mCompositeDisposable.add(disposable);
+        } catch (Throwable e) {
+            Log.e("checkUpdate", "Fail and throw Err: ", e);
+        }
     }
 
     @Override

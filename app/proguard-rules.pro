@@ -10,6 +10,7 @@
     int getModuleVersion();
 }
 
+-keep class com.xtjun.xpForwardSms.xp.HookEntry
 
 # ==========================
 # Umeng analyze proguard start

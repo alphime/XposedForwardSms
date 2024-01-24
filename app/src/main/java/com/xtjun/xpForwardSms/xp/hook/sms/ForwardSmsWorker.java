@@ -66,6 +66,7 @@ public class ForwardSmsWorker {
             XLog.e("Error occurs when get SmsGetAction call value", e);
             return null;
         }
+//        Log.e("Msm-print", "msg: \n" + smsMsg);
 
         //过滤短信内容
         boolean filterFlag = true;

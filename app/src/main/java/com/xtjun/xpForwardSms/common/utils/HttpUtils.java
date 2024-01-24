@@ -27,8 +27,11 @@ public class HttpUtils {
             content = URLEncoder.encode(content, "UTF-8");
             url = url.replace(TITLE, title).replace(CONTENT, content);
             Request request = new Request.Builder().url(url).build();
-            Response response = client.newCall(request).execute();//发送请求
-            String result = response.body() != null ? response.body().string() : "";
+            String result;
+            try (Response response = client.newCall(request).execute()) {
+                result = response.body() != null ? response.body().string() : "";
+            }
+            //发送请求
             XLog.d("cust get successfully: " + result);
             return true;
         } catch (IOException e) {
@@ -56,8 +59,11 @@ public class HttpUtils {
                     .url(url)
                     .post(requestBody)
                     .build();
-            Response response = client.newCall(request).execute();//发送请求
-            String result = response.body() != null ? response.body().string() : "";
+            String result;
+            try (Response response = client.newCall(request).execute()) {
+                result = response.body() != null ? response.body().string() : "";
+            }
+            //发送请求
             XLog.d("custom post successfully: " + result);
             return true;
         } catch (IOException e) {
@@ -77,8 +83,11 @@ public class HttpUtils {
             content = URLEncoder.encode(content, "UTF-8");
             url = url + "/" + title + "/" + content;
             Request request = new Request.Builder().url(url).build();
-            Response response = client.newCall(request).execute();//发送请求
-            String result = response.body() != null ? response.body().string() : "";
+            String result;
+            try (Response response = client.newCall(request).execute()) {
+                result = response.body() != null ? response.body().string() : "";
+            }
+            //发送请求
             XLog.d("getBark successfully: " + result);
             return true;
         } catch (IOException e) {
@@ -96,8 +105,11 @@ public class HttpUtils {
                     );
 
             Request request = new Request.Builder().url(url).post(requestBody).build();
-            Response response = client.newCall(request).execute();//发送请求
-            String result = response.body() != null ? response.body().string() : "";
+            String result;
+            try (Response response = client.newCall(request).execute()) {
+                result = response.body() != null ? response.body().string() : "";
+            }
+            //发送请求
             XLog.d("postDingTalk successfully: " + result);
             return true;
         } catch (IOException e) {
@@ -111,8 +123,11 @@ public class HttpUtils {
         try {
             String url = "https://qyapi.weixin.qq.com/cgi-bin/gettoken?corpid=" + corpid + "&corpsecret=" + corpsecret;
             Request request = new Request.Builder().url(url).build();
-            Response response = client.newCall(request).execute();//发送请求
-            Map<String, String> resultMap = JsonUtils.fromJsonToMap(response.body() != null ? response.body().string() : "");
+            Map<String, String> resultMap;
+            try (Response response = client.newCall(request).execute()) {
+                resultMap = JsonUtils.fromJsonToMap(response.body() != null ? response.body().string() : "");
+            }
+            //发送请求
             XLog.d("getWxcpToken successfully: " + resultMap);
             return resultMap.get(TOKEN);
         } catch (IOException e) {
@@ -130,8 +145,11 @@ public class HttpUtils {
                     );
 
             Request request = new Request.Builder().url(url).post(requestBody).build();
-            Response response = client.newCall(request).execute();//发送请求
-            String result = response.body() != null ? response.body().string() : "";
+            String result;
+            try (Response response = client.newCall(request).execute()) {
+                result = response.body() != null ? response.body().string() : "";
+            }
+            //发送请求
             XLog.d("postWxcpMsg successfully: " + result);
             return true;
         } catch (IOException e) {

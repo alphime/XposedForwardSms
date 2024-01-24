@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <PreferenceCategory android:title="@string/pref_general_title">
 
@@ -27,6 +28,10 @@
             android:key="@string/pref_custom_device_identity"
             android:title="@string/pref_custom_device_identity_title"
             android:summary="@string/pref_custom_device_identity_summary"/>
+
+        <Preference
+            android:key="@string/pref_custom_sim_name"
+            app:title="自定义SIM卡名称" />
 
     </PreferenceCategory>
 

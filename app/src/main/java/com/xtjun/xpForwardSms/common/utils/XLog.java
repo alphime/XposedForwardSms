@@ -18,12 +18,13 @@ public class XLog {
         if (priority < sLogLevel)
             return;
 
-        message = String.format(message, args);
-
-        if (args.length > 0 && args[args.length - 1] instanceof Throwable) {
-            Throwable throwable = (Throwable) args[args.length - 1];
-            String stacktraceStr = Log.getStackTraceString(throwable);
-            message += '\n' + stacktraceStr;
+        if (args.length > 0) {
+            message = String.format(message, args);
+            if (args[args.length - 1] instanceof Throwable) {
+                Throwable throwable = (Throwable) args[args.length - 1];
+                String stacktraceStr = Log.getStackTraceString(throwable);
+                message += '\n' + stacktraceStr;
+            }
         }
 
         // Write to the default log tag
@@ -38,9 +39,6 @@ public class XLog {
         }
 
         if (LOG_TO_EDXPOSED) {
-            if (priority <= Log.DEBUG) { // DEBUG level 不会在 EdXposed 日志中生成,所以调整等级
-                priority = Log.INFO;
-            }
             Log.println(priority, "EdXposed-Bridge", LOG_TAG + ": " + message);
         }
     }

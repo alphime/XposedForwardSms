@@ -48,7 +48,7 @@ public class SmsMsg implements Parcelable {
 
         String sender = smsMessageParts[0].getDisplayOriginatingAddress();
         String body = SmsMessageUtils.getMessageBody(smsMessageParts);
-        int subId = SmsMessageUtils.getSubId(smsMessageParts[0]);
+        int subId = SmsMessageUtils.getSubId(intent);
 
         sender = Normalizer.normalize(sender, Normalizer.Form.NFC);
         body = Normalizer.normalize(body, Normalizer.Form.NFC);

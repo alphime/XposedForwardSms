@@ -4,6 +4,9 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -13,12 +16,13 @@ public class JsonUtils {
     private JsonUtils() {
     }
 
-    private static Gson getGson(){
+    private static Gson getGson() {
         if (null == gson) {
-            gson =  new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
+            gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
         }
         return gson;
     }
+
     public static <T> T fromJson(String json, Class<T> typeClass) {
         return getGson().fromJson(json, typeClass);
     }
@@ -28,7 +32,18 @@ public class JsonUtils {
         }.getType());
     }
 
-    public static String toJsonString(Object o){
+    public static String toJsonString(Object o) {
         return getGson().toJson(o);
+    }
+
+    public static JSONArray fromJsonToArr(String json) {
+        if (json != null) {
+            try {
+                return new JSONArray(json);
+            } catch (JSONException e) {
+                //
+            }
+        }
+        return null;
     }
 }

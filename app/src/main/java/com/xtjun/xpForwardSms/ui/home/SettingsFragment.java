@@ -4,8 +4,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.telephony.TelephonyManager;
 import android.util.Log;
+import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.FragmentActivity;
 import androidx.preference.EditTextPreference;
@@ -13,6 +18,7 @@ import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.PreferenceManager;
 
+import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.github.xtjun.xposed.forwardSms.BuildConfig;
 import com.github.xtjun.xposed.forwardSms.R;
@@ -22,6 +28,7 @@ import com.xtjun.xpForwardSms.common.constant.Const;
 import com.xtjun.xpForwardSms.common.constant.MPrefConst;
 import com.xtjun.xpForwardSms.common.constant.PrefConst;
 import com.xtjun.xpForwardSms.common.msp.MultiProcessSharedPreferences;
+import com.xtjun.xpForwardSms.common.utils.JsonUtils;
 import com.xtjun.xpForwardSms.common.utils.ModuleUtils;
 import com.xtjun.xpForwardSms.common.utils.PackageUtils;
 import com.xtjun.xpForwardSms.common.utils.SnackbarHelper;
@@ -31,6 +38,11 @@ import com.xtjun.xpForwardSms.common.utils.XLog;
 import com.xtjun.xpForwardSms.data.http.entity.ApkVersion;
 import com.xtjun.xpForwardSms.ui.home.action.impl.TestSmsAction;
 
+import org.json.JSONArray;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -131,30 +143,31 @@ public class SettingsFragment extends PreferenceFragmentCompat implements
     }
 
     private void setClickListener(Preference.OnPreferenceClickListener listener) {
-            findPreference(PrefConst.KEY_CHOOSE_THEME).setOnPreferenceClickListener(listener);
-            findPreference(PrefConst.PREF_TEST_SMS).setOnPreferenceClickListener(listener);
-            findPreference(PrefConst.KEY_VERSION).setOnPreferenceClickListener(listener);
-            findPreference(PrefConst.KEY_SOURCE_CODE).setOnPreferenceClickListener(listener);
-            findPreference(PrefConst.KEY_DONATE_BY_ALIPAY).setOnPreferenceClickListener(listener);
+        findPreference(PrefConst.KEY_CHOOSE_THEME).setOnPreferenceClickListener(listener);
+        findPreference(PrefConst.PREF_TEST_SMS).setOnPreferenceClickListener(listener);
+        findPreference(PrefConst.KEY_VERSION).setOnPreferenceClickListener(listener);
+        findPreference(PrefConst.KEY_SOURCE_CODE).setOnPreferenceClickListener(listener);
+        findPreference(PrefConst.KEY_DONATE_BY_ALIPAY).setOnPreferenceClickListener(listener);
+        findPreference(PrefConst.PREF_CUSTOM_SIM_NAME).setOnPreferenceClickListener(listener);
     }
 
     private void setChangedListener(Preference.OnPreferenceChangeListener listener) {
-            findPreference(PrefConst.KEY_HIDE_LAUNCHER_ICON).setOnPreferenceChangeListener(listener);
-            findPreference(PrefConst.PREF_CUSTOM_DEVICE_IDENTITY).setOnPreferenceChangeListener(listener);
-            findPreference(PrefConst.KEY_VERBOSE_LOG_MODE).setOnPreferenceChangeListener(listener);
-            findPreference(PrefConst.PREF_FORWARD_CHANNEL_TYPE).setOnPreferenceChangeListener(listener);
-            findPreference(PrefConst.PREF_CHANNEL_CONFIG_GET_URL).setOnPreferenceChangeListener(listener);
-            findPreference(PrefConst.PREF_CHANNEL_CONFIG_POST_URL).setOnPreferenceChangeListener(listener);
-            findPreference(PrefConst.PREF_CHANNEL_CONFIG_POST_TYPE).setOnPreferenceChangeListener(listener);
-            findPreference(PrefConst.PREF_CHANNEL_CONFIG_POST_BODY).setOnPreferenceChangeListener(listener);
-            findPreference(PrefConst.PREF_CHANNEL_CONFIG_DING_TOKEN).setOnPreferenceChangeListener(listener);
-            findPreference(PrefConst.PREF_CHANNEL_CONFIG_BARK_URL).setOnPreferenceChangeListener(listener);
-            findPreference(PrefConst.PREF_CHANNEL_CONFIG_WXCP_CORPID).setOnPreferenceChangeListener(listener);
-            findPreference(PrefConst.PREF_CHANNEL_CONFIG_WXCP_AGENTID).setOnPreferenceChangeListener(listener);
-            findPreference(PrefConst.PREF_CHANNEL_CONFIG_WXCP_CORPSECRET).setOnPreferenceChangeListener(listener);
-            findPreference(PrefConst.PREF_CHANNEL_CONFIG_WXCP_TOUSER).setOnPreferenceChangeListener(listener);
-            findPreference(PrefConst.PREF_FILTER_ENABLE).setOnPreferenceChangeListener(listener);
-            findPreference(PrefConst.PREF_FILTER_KEYWORDS).setOnPreferenceChangeListener(listener);
+        findPreference(PrefConst.KEY_HIDE_LAUNCHER_ICON).setOnPreferenceChangeListener(listener);
+        findPreference(PrefConst.PREF_CUSTOM_DEVICE_IDENTITY).setOnPreferenceChangeListener(listener);
+        findPreference(PrefConst.KEY_VERBOSE_LOG_MODE).setOnPreferenceChangeListener(listener);
+        findPreference(PrefConst.PREF_FORWARD_CHANNEL_TYPE).setOnPreferenceChangeListener(listener);
+        findPreference(PrefConst.PREF_CHANNEL_CONFIG_GET_URL).setOnPreferenceChangeListener(listener);
+        findPreference(PrefConst.PREF_CHANNEL_CONFIG_POST_URL).setOnPreferenceChangeListener(listener);
+        findPreference(PrefConst.PREF_CHANNEL_CONFIG_POST_TYPE).setOnPreferenceChangeListener(listener);
+        findPreference(PrefConst.PREF_CHANNEL_CONFIG_POST_BODY).setOnPreferenceChangeListener(listener);
+        findPreference(PrefConst.PREF_CHANNEL_CONFIG_DING_TOKEN).setOnPreferenceChangeListener(listener);
+        findPreference(PrefConst.PREF_CHANNEL_CONFIG_BARK_URL).setOnPreferenceChangeListener(listener);
+        findPreference(PrefConst.PREF_CHANNEL_CONFIG_WXCP_CORPID).setOnPreferenceChangeListener(listener);
+        findPreference(PrefConst.PREF_CHANNEL_CONFIG_WXCP_AGENTID).setOnPreferenceChangeListener(listener);
+        findPreference(PrefConst.PREF_CHANNEL_CONFIG_WXCP_CORPSECRET).setOnPreferenceChangeListener(listener);
+        findPreference(PrefConst.PREF_CHANNEL_CONFIG_WXCP_TOUSER).setOnPreferenceChangeListener(listener);
+        findPreference(PrefConst.PREF_FILTER_ENABLE).setOnPreferenceChangeListener(listener);
+        findPreference(PrefConst.PREF_FILTER_KEYWORDS).setOnPreferenceChangeListener(listener);
     }
 
     @Override
@@ -174,6 +187,9 @@ public class SettingsFragment extends PreferenceFragmentCompat implements
                 break;
             case PrefConst.PREF_TEST_SMS:
                 testSms();
+                break;
+            case PrefConst.PREF_CUSTOM_SIM_NAME:
+                customSimName();
                 break;
             default:
                 return false;
@@ -351,6 +367,47 @@ public class SettingsFragment extends PreferenceFragmentCompat implements
 
     private void donateByAlipay() {
         PackageUtils.startAlipayDonatePage(mActivity);
+    }
+
+
+    private void customSimName() {
+        TelephonyManager tm = (TelephonyManager) getContext().getSystemService(Context.TELEPHONY_SERVICE);
+        int phoneCount = tm.getPhoneCount();
+        List<EditText> list = new ArrayList<>();
+        LinearLayout layout = new LinearLayout(getContext());
+        layout.setPadding(80, 20, 80, 20);
+        layout.setOrientation(LinearLayout.VERTICAL);
+        String custom_sim_name = msp.getString(PrefConst.PREF_CUSTOM_SIM_NAME, null);
+        JSONArray simNames_array = JsonUtils.fromJsonToArr(custom_sim_name);
+        for (int i = 1; i <= phoneCount; i++) {
+            TextView tv_sim = new TextView(getContext());
+            tv_sim.setText(String.format(Locale.getDefault(), "卡%d:", i));
+            EditText et = new EditText(getContext());
+            if (simNames_array != null) {
+                String text = simNames_array.optString(i - 1);
+                et.setText(text);
+            }
+            layout.addView(tv_sim);
+            layout.addView(et);
+            list.add(et);
+        }
+        new MaterialDialog.Builder(getContext())
+                .title("自定义SIM卡名称")
+                .customView(layout, false)
+                .positiveText("确定")
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        JSONArray array = new JSONArray();
+                        for (int i = 1; i <= list.size(); i++) {
+                            String text = list.get(i - 1).getText().toString().trim();
+                            array.put(text);
+                        }
+                        msp.edit().putString(PrefConst.PREF_CUSTOM_SIM_NAME, array.toString()).apply();
+                    }
+                })
+                .negativeText("取消").show();
+
     }
 
 }

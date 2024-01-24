@@ -15,16 +15,12 @@ import com.github.xtjun.xposed.forwardSms.R;
 import com.xtjun.xpForwardSms.common.utils.PackageUtils;
 import com.xtjun.xpForwardSms.ui.app.base.BaseActivity;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
 
 /**
  * 主界面
  */
 public class HomeActivity extends BaseActivity {
-    @BindView(R.id.toolbar)
     Toolbar mToolbar;
-
 
     private Fragment mCurrentFragment;
     private FragmentManager mFragmentManager;
@@ -34,7 +30,6 @@ public class HomeActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_home);
-        ButterKnife.bind(this);
 
         getExternalFilesDir("");
 
@@ -42,6 +37,10 @@ public class HomeActivity extends BaseActivity {
 
         // setup toolbar
         setupToolbar();
+
+        {
+            mToolbar = findViewById(R.id.toolbar);
+        }
     }
 
     private void setupToolbar() {
@@ -98,16 +97,16 @@ public class HomeActivity extends BaseActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                onBackPressed();
-                return true;
-            case R.id.action_taichi_users_notice:
-                onTaichiUsersNoticeSelected();
-                return true;
-            case R.id.action_edxposed_users_notice:
-                onEdxposedUsersNoticeSelected();
-                return true;
+        int id = item.getItemId();
+        if (id == android.R.id.home) {
+            onBackPressed();
+            return true;
+        } else if (id == R.id.action_taichi_users_notice) {
+            onTaichiUsersNoticeSelected();
+            return true;
+        } else if (id == R.id.action_edxposed_users_notice) {
+            onEdxposedUsersNoticeSelected();
+            return true;
         }
         return super.onOptionsItemSelected(item);
     }

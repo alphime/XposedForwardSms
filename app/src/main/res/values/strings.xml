@@ -165,6 +165,7 @@
     <string name="pref_category_appearance">外观</string>
     <string name="pref_colored_navigation_bar_title">导航栏颜色</string>
     <string name="pref_colored_navigation_bar_summary">导航栏颜色和主色调保持一致</string>
+    <string name="pref_custom_sim_name">pref_custom_sim_name</string>
     <!-- theme Cyanea -->
 
 

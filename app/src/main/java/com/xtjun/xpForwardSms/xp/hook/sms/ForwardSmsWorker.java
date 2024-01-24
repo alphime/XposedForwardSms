@@ -1,5 +1,7 @@
 package com.xtjun.xpForwardSms.xp.hook.sms;
 
+import static com.xtjun.xpForwardSms.common.utils.BatteryUtil.initBatteryManager;
+
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -28,11 +30,11 @@ public class ForwardSmsWorker {
     private final SharedPreferences sp;
     private final Intent mSmsIntent;
     private final ScheduledExecutorService mScheduledExecutor;
-
     ForwardSmsWorker(Context appContext, Intent smsIntent) {
         sp = MultiProcessSharedPreferences.getSharedPreferences(appContext, MPrefConst.SP_NAME, Context.MODE_PRIVATE);
         mSmsIntent = smsIntent;
         mScheduledExecutor = Executors.newSingleThreadScheduledExecutor();
+        initBatteryManager(appContext);
     }
 
     public ParseResult parse() {

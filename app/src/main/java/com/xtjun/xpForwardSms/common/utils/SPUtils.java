@@ -4,6 +4,8 @@ import android.content.SharedPreferences;
 
 import com.xtjun.xpForwardSms.common.constant.PrefConst;
 
+import org.json.JSONArray;
+
 
 public class SPUtils {
 
@@ -119,4 +121,15 @@ public class SPUtils {
         return preferences.getString(PrefConst.PREF_FILTER_KEYWORDS, "");
     }
 
+
+    public static String getSimName(SharedPreferences sp, int phoneId) {
+        JSONArray simNames_array = JsonUtils.fromJsonToArr(sp.getString(PrefConst.PREF_CUSTOM_SIM_NAME, null));
+        String simName = null;
+        if (simNames_array != null) {
+            simName = simNames_array.optString(phoneId - 1);
+        }
+        if (simName == null || simName.isEmpty())
+            simName = "卡" + phoneId;
+        return simName;
+    }
 }

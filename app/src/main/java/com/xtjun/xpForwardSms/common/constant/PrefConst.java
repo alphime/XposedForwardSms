@@ -14,6 +14,7 @@ public interface PrefConst {
     String KEY_HIDE_LAUNCHER_ICON = "pref_hide_launcher_icon";
     String KEY_CHOOSE_THEME = "pref_choose_theme";
     String PREF_CUSTOM_DEVICE_IDENTITY = "pref_custom_device_identity";
+    String PREF_CUSTOM_SIM_NAME = "pref_custom_sim_name";
 
     // Others
     String KEY_VERBOSE_LOG_MODE = "pref_verbose_log_mode";

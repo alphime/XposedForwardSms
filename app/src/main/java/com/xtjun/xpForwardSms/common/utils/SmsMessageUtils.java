@@ -1,7 +1,6 @@
 package com.xtjun.xpForwardSms.common.utils;
 
 import android.content.Intent;
-import android.os.Build;
 import android.provider.Telephony;
 import android.telephony.SmsMessage;
 
@@ -10,19 +9,21 @@ import java.lang.reflect.Method;
 public class SmsMessageUtils {
 
     private static final int SMS_CHARACTER_LIMIT = 160;
-    private static final Method sGetSubId;
+    private static Method sGetSubId;
 
-    static {
-        Method getSubId = null;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
-            try {
-                getSubId = ReflectionUtils.getDeclaredMethod(SmsMessage.class, "getSubId");
-            } catch (Exception e) {
-                XLog.e("Could not find SmsMessage.getSubId() method");
-            }
-        }
-        sGetSubId = getSubId;
-    }
+    private static final String EXTRA_SUB_ID = "subscription";
+
+//    static {
+//        Method getSubId = null;
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
+//            try {
+//                getSubId = ReflectionUtils.getDeclaredMethod(SmsMessage.class, "getSubId");
+//            } catch (Exception e) {
+//                XLog.e("Could not find SmsMessage.getSubId() method");
+//            }
+//        }
+//        sGetSubId = getSubId;
+//    }
 
     private SmsMessageUtils() {
     }
@@ -54,4 +55,9 @@ public class SmsMessageUtils {
         return 0;
     }
 
+
+    public static int getSubId(Intent intent) {
+        return intent.getIntExtra(EXTRA_SUB_ID,
+                -1);
+    }
 }

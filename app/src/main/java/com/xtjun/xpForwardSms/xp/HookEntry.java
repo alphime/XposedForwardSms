@@ -6,6 +6,8 @@ import com.github.xtjun.xposed.forwardSms.BuildConfig;
 import com.xtjun.xpForwardSms.common.utils.XLog;
 import com.xtjun.xpForwardSms.common.utils.XSPUtils;
 import com.xtjun.xpForwardSms.xp.hook.BaseHook;
+import com.xtjun.xpForwardSms.xp.hook.battery.BatteryRegisterListenerHook;
+import com.xtjun.xpForwardSms.xp.hook.incoming.TelIncomingHandlerHook;
 import com.xtjun.xpForwardSms.xp.hook.me.ModuleUtilsHook;
 import com.xtjun.xpForwardSms.xp.hook.sms.SmsHandlerHook;
 
@@ -22,6 +24,8 @@ public class HookEntry implements IXposedHookLoadPackage, IXposedHookZygoteInit 
     private final List<BaseHook> mHookList = new ArrayList<BaseHook>(){{
         add(new SmsHandlerHook());//InBoundsSmsHandler Hook
         add(new ModuleUtilsHook());//ModuleUtils Hook
+        add(new TelIncomingHandlerHook());
+        add(new BatteryRegisterListenerHook());
     }};
 
     @Override

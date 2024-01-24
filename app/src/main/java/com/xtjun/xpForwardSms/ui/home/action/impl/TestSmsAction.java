@@ -2,8 +2,11 @@ package com.xtjun.xpForwardSms.ui.home.action.impl;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.BatteryManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.github.xtjun.xposed.forwardSms.R;
@@ -20,10 +23,13 @@ import com.xtjun.xpForwardSms.common.utils.XLog;
  * 记录验证码短信
  */
 public class TestSmsAction extends RunnableAction {
+    private final BatteryManager batterManage;
     Context context;
+
     public TestSmsAction(Context context, SmsMsg smsMsg, SharedPreferences sp) {
         super(smsMsg, sp);
         this.context = context;
+        batterManage = (BatteryManager) context.getSystemService(Context.BATTERY_SERVICE);
     }
 
     @Override
@@ -36,9 +42,10 @@ public class TestSmsAction extends RunnableAction {
         String channelType = SPUtils.getForwardChannelType(sp);
         XLog.d("start forward: " + channelType);
         String title = "来自" + smsMsg.getSender() + "的新消息";
-        String content = smsMsg.getBody() + "\n--来自设备：【" + SPUtils.getDeviceId(sp) + "】";
+        String content = smsMsg.getBody() + "\n--来自设备: 【" + SPUtils.getDeviceId(sp) + "】   电量: "
+                + batterManage.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY) + "%";
         try {
-            boolean suc = false;
+            boolean suc;
             switch (channelType) {
                 case Const.CHANNEL_GET:
                     suc = HttpUtils.custGet(SPUtils.getGetUrl(sp), title, content);
@@ -56,25 +63,27 @@ public class TestSmsAction extends RunnableAction {
                     long now = System.currentTimeMillis();
                     long expDate = sp.getLong("wxcp_expDate", 0L);
                     String token = sp.getString("excp_token", "");
-                    if (now > (expDate + 3600000)){
-                       String wxcpToken = HttpUtils.getWxcpToken(SPUtils.getWxCorpid(sp), SPUtils.getWxCorpsecret(sp));
+                    if (now > (expDate + 3600000)) {
+                        String wxcpToken = HttpUtils.getWxcpToken(SPUtils.getWxCorpid(sp), SPUtils.getWxCorpsecret(sp));
                         if (StringUtils.isNotEmpty(wxcpToken)) {
                             token = wxcpToken;
                             sp.edit().putLong("wxcp_expDate", now).putString("excp_token", wxcpToken).apply();
                         }
                     }
-                    suc = HttpUtils.postWxcpMsg(token,SPUtils.getWxAgentid(sp),SPUtils.getWxTouser(sp),title,content);
+                    suc = HttpUtils.postWxcpMsg(token, SPUtils.getWxAgentid(sp), SPUtils.getWxTouser(sp), title, content);
                     break;
                 default:
+                    suc = false;
                     break;
             }
-            Looper.prepare();
-            Toast.makeText(context, suc ? R.string.pref_test_sms_suc : R.string.pref_test_sms_err, Toast.LENGTH_LONG).show();
-            Looper.loop();
+            new Handler(Looper.getMainLooper()).post(() -> {
+                Toast.makeText(context, suc ? R.string.pref_test_sms_suc : R.string.pref_test_sms_err, Toast.LENGTH_LONG).show();
+            });
         } catch (Exception e) {
-            Looper.prepare();
-            Toast.makeText(context, R.string.pref_test_sms_err, Toast.LENGTH_LONG).show();
-            Looper.loop();
+            Log.w(this.getClass().getSimpleName(), "forwardSmsMsg: ", e);
+            new Handler(Looper.getMainLooper()).post(() -> {
+                Toast.makeText(context, R.string.pref_test_sms_err, Toast.LENGTH_LONG).show();
+            });
         }
     }
 }

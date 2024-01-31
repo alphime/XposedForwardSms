@@ -2,6 +2,7 @@ package com.xtjun.xpForwardSms.xp.hook.sms.action.impl;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 
 import com.xtjun.xpForwardSms.common.action.RunnableAction;
 import com.xtjun.xpForwardSms.common.action.entity.MsgForWardData;
@@ -27,7 +28,7 @@ public class ForwardSmsAction extends RunnableAction {
     }
 
     private void forwardSmsMsg(SmsMsg smsMsg) {
-        int subId = smsMsg.getSubId();
+        int subId = smsMsg.getPhoneId();
         String simName = XSPUtils.getSimName(sp, subId);
         String title = simName + " 收到" + smsMsg.getSender() + "的新消息";
         String content = smsMsg.getBody();

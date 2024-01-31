@@ -24,7 +24,7 @@ public class BatteryBroadcastReceiver extends BroadcastReceiver {
     private static final String SELF_PACKAGE = BuildConfig.APPLICATION_ID;
     private final boolean[] state = new boolean[2];
     private static SharedPreferences sp;
-    private boolean needSendBatteryAnyChange;    // 发送失败后，当电量发生改变时，任意发送一次发生变化的电量百分比
+    private int last_capacity;    // 发送失败后，当电量发生改变时，任意发送一次发生变化的电量百分比
 
     public BatteryBroadcastReceiver() {
         super();
@@ -58,8 +58,8 @@ public class BatteryBroadcastReceiver extends BroadcastReceiver {
                     try {
                         if (sp != null && XSPUtils.isEnabled(sp)) {
                             int capacity = BatteryUtil.getBatteryCapacity();
-                            if (capacity % 5 == 0 || needSendBatteryAnyChange) {
-                                needSendBatteryAnyChange = false;
+                            if (capacity % 5 == 0 && last_capacity > capacity) {
+                                last_capacity = capacity;
                                 sendBatteryLowMsg(capacity, sp);
                             }
                             break;
@@ -67,10 +67,8 @@ public class BatteryBroadcastReceiver extends BroadcastReceiver {
                     } catch (Exception e) {
                         Log.e("BatteryForwardData", "Fail: ", e);
                     }
-                    needSendBatteryAnyChange = true;
-                } else {
-                    needSendBatteryAnyChange = false;
-                }
+                } else
+                    last_capacity = 100;
                 break;
             case Intent.ACTION_POWER_CONNECTED://接通电源
                 state[1] = true;
@@ -87,6 +85,6 @@ public class BatteryBroadcastReceiver extends BroadcastReceiver {
                 XSPUtils.getDeviceId(sp) + "低电量提醒",
                 "设备当前电量" + capacity + "%，请及时充电以免关机！"
         );
-        new Thread(() -> needSendBatteryAnyChange = !ForwardActionUtil.execute(data, sp, false)).start();
+        new Thread(() -> ForwardActionUtil.execute(data, sp, false)).start();
     }
 }

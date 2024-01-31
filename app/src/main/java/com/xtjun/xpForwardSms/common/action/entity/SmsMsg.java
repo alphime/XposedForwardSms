@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.telephony.SmsMessage;
+import android.telephony.SubscriptionManager;
+import android.telephony.TelephonyManager;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
@@ -12,6 +14,7 @@ import com.xtjun.xpForwardSms.common.utils.SmsMessageUtils;
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Generated;
 import org.greenrobot.greendao.annotation.Id;
+import org.greenrobot.greendao.annotation.Keep;
 
 import java.text.Normalizer;
 import java.util.Objects;
@@ -40,21 +43,20 @@ public class SmsMsg implements Parcelable {
 
     // subId
     @Expose
-    @SerializedName("subId")
-    private int subId;
+    @SerializedName("phoneId")
+    private int phoneId = -1;
 
     public static SmsMsg fromIntent(Intent intent) {
         SmsMessage[] smsMessageParts = SmsMessageUtils.fromIntent(intent);
 
         String sender = smsMessageParts[0].getDisplayOriginatingAddress();
         String body = SmsMessageUtils.getMessageBody(smsMessageParts);
-        int subId = SmsMessageUtils.getSubId(intent);
-
+        int phoneid = SmsMessageUtils.getPhoneId(intent);
         sender = Normalizer.normalize(sender, Normalizer.Form.NFC);
         body = Normalizer.normalize(body, Normalizer.Form.NFC);
 
         SmsMsg message = new SmsMsg();
-        message.setSender(sender).setBody(body).setSubId(subId);
+        message.setSender(sender).setBody(body).setPhoneId(phoneid);
         return message;
     }
 
@@ -84,12 +86,12 @@ public class SmsMsg implements Parcelable {
         this.date = date;
     }
 
-    public int getSubId() {
-        return subId;
+    public int getPhoneId() {
+        return phoneId;
     }
 
-    public SmsMsg setSubId(int subId) {
-        this.subId = subId;
+    public SmsMsg setPhoneId(int phoneId) {
+        this.phoneId = phoneId;
         return this;
     }
 
@@ -113,12 +115,13 @@ public class SmsMsg implements Parcelable {
     }
 
     @Generated(hash = 1224986056)
-    public SmsMsg(Long id, String sender, String body, long date, int subId) {
+    @Keep
+    public SmsMsg(Long id, String sender, String body, long date, int phoneId) {
         this.id = id;
         this.sender = sender;
         this.body = body;
         this.date = date;
-        this.subId = subId;
+        this.phoneId = phoneId;
     }
 
     @Override
@@ -178,6 +181,7 @@ public class SmsMsg implements Parcelable {
                 ", sender='" + sender + '\'' +
                 ", body='" + body + '\'' +
                 ", date=" + date +
+                ", phoneId=" + phoneId +
                 '}';
     }
 }

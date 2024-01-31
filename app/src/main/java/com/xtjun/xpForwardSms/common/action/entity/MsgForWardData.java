@@ -22,4 +22,12 @@ public class MsgForWardData {
         return new MsgForWardData(title, content +
                 "\n--来自设备: 【" + XSPUtils.getDeviceId(sp) + "】   电量: " + batteryCapacity + "%");
     }
+
+    @Override
+    public String toString() {
+        return "MsgForWardData{" +
+                "title='" + title + '\'' +
+                ", content='" + content + '\'' +
+                '}';
+    }
 }

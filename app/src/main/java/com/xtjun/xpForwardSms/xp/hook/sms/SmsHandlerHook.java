@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Binder;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Looper;
 import android.os.UserHandle;
 import android.provider.Telephony;
 import android.telephony.SubscriptionManager;
@@ -72,16 +73,36 @@ public class SmsHandlerHook extends BaseHook {
     }
 
     private void hookConstructor(ClassLoader classloader) {
-        if (Build.VERSION.SDK_INT >= 30) {
-            // Android 11+
-            hookConstructor30(classloader);
-        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            // Android 7.0 ~ 10 (api 24 - 29)
-            hookConstructor24(classloader);
-        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            // Android 4.4 ~ 6.1 (api 19 - 23)
-            hookConstructor19(classloader);
+        try {
+            if (Build.VERSION.SDK_INT >= 34) {
+                hookConstructor34(classloader);
+            }
+            else if (Build.VERSION.SDK_INT >= 30) {
+                // Android 11+
+                hookConstructor30(classloader);
+            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                // Android 7.0 ~ 10 (api 24 - 29)
+                hookConstructor24(classloader);
+            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                // Android 4.4 ~ 6.1 (api 19 - 23)
+                hookConstructor19(classloader);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(this.getClass().getSimpleName() +
+                    " Init<InboundSmsHandler> need to adapted!", e);
         }
+    }
+
+    // 12+
+    private void hookConstructor34(ClassLoader classloader) {
+        XLog.i("Hooking InboundSmsHandler constructor for android v34+");
+        XposedHelpers.findAndHookConstructor(SMS_HANDLER_CLASS, classloader,
+                /* name                 */ String.class,
+                /* context              */ Context.class,
+                /* storageMonitor       */ TELEPHONY_PACKAGE + ".SmsStorageMonitor",
+                /* phone                */ TELEPHONY_PACKAGE + ".Phone",
+                /* looper <since 34 this added>  */ Looper.class,
+                new ConstructorHook());
     }
 
     // Android 11+

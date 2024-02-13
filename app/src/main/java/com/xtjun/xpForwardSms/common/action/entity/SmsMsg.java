@@ -4,8 +4,6 @@ import android.content.Intent;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.telephony.SmsMessage;
-import android.telephony.SubscriptionManager;
-import android.telephony.TelephonyManager;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;

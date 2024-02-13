@@ -10,6 +10,8 @@ import android.content.SharedPreferences;
 import com.xtjun.xpForwardSms.common.utils.XSPUtils;
 
 public class MsgForWardData {
+    static final String DEVICE_WORD = "\uD83D\uDCF1";
+    static final String Battery_Word = "\uD83D\uDD0B";
     public final String title;
     public final String content;
 
@@ -20,7 +22,7 @@ public class MsgForWardData {
 
     public MsgForWardData appendDeviceInfo(SharedPreferences sp, int batteryCapacity) {
         return new MsgForWardData(title, content +
-                "\n--来自设备: 【" + XSPUtils.getDeviceId(sp) + "】   电量: " + batteryCapacity + "%");
+                "\n" + DEVICE_WORD + ": '" + XSPUtils.getDeviceId(sp) + "'     " + Battery_Word + ": " + batteryCapacity + "%");
     }
 
     @Override

@@ -35,7 +35,6 @@ public class ForwardSmsWorker {
         sp = MultiProcessSharedPreferences.getSharedPreferences(appContext, MPrefConst.SP_NAME, Context.MODE_PRIVATE);
         mSmsIntent = smsIntent;
         mScheduledExecutor = Executors.newSingleThreadScheduledExecutor();
-        initBatteryManager(appContext);
     }
 
     public ParseResult parse() {

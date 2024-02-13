@@ -10,6 +10,7 @@ import android.content.SharedPreferences;
 import com.xtjun.xpForwardSms.common.action.entity.MsgForWardData;
 import com.xtjun.xpForwardSms.common.constant.Const;
 
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Timer;
@@ -97,4 +98,22 @@ public class ForwardActionUtil {
         return suc;
     }
 
+    public static void startDeviceHeartbeat(SharedPreferences sp) {
+        Date date = new Date();
+        date.setHours(8);
+        date.setMinutes(0);
+        date.setSeconds(0);
+        if (date.before(new Date())) {
+            date.setDate(date.getDate() + 1);
+        }
+        Timer mHeartbeatTimer = new Timer();
+        mHeartbeatTimer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                String content = "早上好鸭~ 新的一天要开心微笑哦！";
+                MsgForWardData data = new MsgForWardData(content, "设备心跳信息").appendDeviceInfo(sp, BatteryUtil.getBatteryCapacity());
+                new Thread(() -> ForwardActionUtil.execute(data, sp, false)).start();
+            }
+        }, date, 24 * 3600);
+    }
 }

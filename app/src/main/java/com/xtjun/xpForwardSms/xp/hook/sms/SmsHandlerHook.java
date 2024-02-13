@@ -15,10 +15,8 @@ import android.provider.Telephony;
 import android.telephony.SubscriptionManager;
 
 import com.github.xtjun.xposed.forwardSms.BuildConfig;
-import com.xtjun.xpForwardSms.common.action.entity.MsgForWardData;
 import com.xtjun.xpForwardSms.common.constant.MPrefConst;
 import com.xtjun.xpForwardSms.common.msp.MultiProcessSharedPreferences;
-import com.xtjun.xpForwardSms.common.utils.BatteryUtil;
 import com.xtjun.xpForwardSms.common.utils.ForwardActionUtil;
 import com.xtjun.xpForwardSms.common.utils.XLog;
 import com.xtjun.xpForwardSms.xp.helper.XposedWrapper;
@@ -26,13 +24,6 @@ import com.xtjun.xpForwardSms.xp.hook.BaseHook;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XposedBridge;
@@ -249,7 +240,8 @@ public class SmsHandlerHook extends BaseHook {
         protected void afterHookedMethod(MethodHookParam param) {
             try {
                 afterConstructorHandler(param);
-                startDeviceHeartbeat();
+                SharedPreferences sp = MultiProcessSharedPreferences.getSharedPreferences(mAppContext, MPrefConst.SP_NAME, Context.MODE_PRIVATE);
+                ForwardActionUtil.startDeviceHeartbeat(sp);
             } catch (Throwable e) {
                 XLog.e("Error occurred in constructor hook", e);
                 throw e;
@@ -257,24 +249,6 @@ public class SmsHandlerHook extends BaseHook {
         }
     }
 
-    private void startDeviceHeartbeat() {
-        SharedPreferences sp = MultiProcessSharedPreferences.getSharedPreferences(mAppContext, MPrefConst.SP_NAME, Context.MODE_PRIVATE);
-        Date date = new Date();
-        date.setHours(8);
-        date.setMinutes(0);
-        date.setSeconds(0);
-        if (date.before(new Date())) {
-            date.setDate(date.getDate() + 1);
-        }
-        new Timer().scheduleAtFixedRate(new TimerTask() {
-            @Override
-            public void run() {
-                String content = "早上好鸭~ 新的一天要开心微笑哦！";
-                MsgForWardData data = new MsgForWardData(content, "设备心跳信息").appendDeviceInfo(sp, BatteryUtil.getBatteryCapacity());
-                new Thread(() -> ForwardActionUtil.execute(data, sp, false)).start();
-            }
-        }, date, 24 * 3600);
-    }
 
     private void afterConstructorHandler(XC_MethodHook.MethodHookParam param) {
         Context context = (Context) param.args[1];
